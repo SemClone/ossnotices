@@ -1,4 +1,4 @@
-# OSS Notices
+# OSS Notices Generator
 
 A simplified open source legal notices generator using the [purl2notices](https://github.com/SemClone/purl2notices) library.
 
