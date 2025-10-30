@@ -64,10 +64,11 @@ class NoticeGenerator:
             self.cache_manager = None
 
         # Initialize purl2notices processor
-        self.processor = Purl2Notices(
-            config=self.config,
-            cache_manager=self.cache_manager
-        )
+        self.processor = Purl2Notices(config=self.config)
+
+        # Set cache manager if available
+        if self.cache_manager:
+            self.processor.cache_manager = self.cache_manager
 
     def scan_directory(
         self,
