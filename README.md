@@ -1,6 +1,6 @@
 # OSS Notices
 
-A simplified CLI wrapper for generating open source legal notices from local source code using the powerful [purl2notices](https://github.com/SemClone/purl2notices) library.
+A simplified open source legal notices generator using the [purl2notices](https://github.com/SemClone/purl2notices) library.
 
 ## Features
 
@@ -8,8 +8,6 @@ A simplified CLI wrapper for generating open source legal notices from local sou
 - **Directory Scanning**: Recursively analyze directories for package dependencies
 - **Archive Support**: Process JAR, WAR, WHL, ZIP, and other archive formats
 - **Multiple Output Formats**: Generate notices in text, HTML, or JSON
-- **Smart Caching**: Automatic caching for improved performance
-- **Progress Indicators**: Visual feedback with rich terminal output
 
 ## Installation
 
@@ -143,24 +141,9 @@ Through purl2notices, ossnotices supports:
 - PHP (Composer)
 - And many more...
 
-## Under the Hood
-
-This tool leverages [purl2notices](https://github.com/SemClone/purl2notices), which provides:
-
-- Support for 12+ package ecosystems
-- Multiple license detection engines
-- Smart extraction from various archive formats
-- CycloneDX cache format support
-
-For advanced use cases requiring direct PURL processing or custom configurations, consider using purl2notices directly.
-
 ## License
 
 MIT License
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Support
 
