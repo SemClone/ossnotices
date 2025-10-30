@@ -16,11 +16,11 @@ console = Console()
 
 @click.command()
 @click.version_option(version=__version__, prog_name='ossnotices')
-@click.argument('input_path', type=click.Path(exists=True))
+@click.argument('path', type=click.Path(exists=True), default='.')
 @click.option(
     '--output', '-o',
     type=click.Path(),
-    help='Output file path (default: NOTICE.txt in current directory)'
+    help='Output file path (default: NOTICE.txt)'
 )
 @click.option(
     '--format', '-f',
@@ -49,7 +49,7 @@ console = Console()
     help='Suppress all output except errors'
 )
 def main(
-    input_path: str,
+    path: str,
     output: Optional[str],
     format: str,
     recursive: bool,
@@ -58,23 +58,24 @@ def main(
     quiet: bool
 ) -> None:
     """
-    Generate legal notices for open source packages.
+    Generate legal notices for open source packages in local source code.
 
-    INPUT_PATH can be:
-    - A directory containing source code
-    - A package archive (JAR, WAR, WHL, etc.)
-    - A file containing PURLs (one per line)
-    - A single PURL string
+    PATH is the directory or archive file to scan (default: current directory).
+    Supported archives: JAR, WAR, WHL, ZIP, TAR, etc.
 
     Examples:
 
     \b
     # Scan current directory
-    ossnotices .
+    ossnotices
+
+    \b
+    # Scan specific directory
+    ossnotices ./src
 
     \b
     # Scan with recursive option and save to file
-    ossnotices ./src --recursive -o NOTICE.txt
+    ossnotices ./project --recursive -o NOTICE.txt
 
     \b
     # Generate HTML format
@@ -82,7 +83,7 @@ def main(
 
     \b
     # Process a JAR file
-    ossnotices library.jar
+    ossnotices library.jar -o NOTICE.txt
     """
 
     if quiet and verbose:
@@ -100,9 +101,9 @@ def main(
             use_cache=cache
         )
 
-        input_path_obj = Path(input_path)
+        path_obj = Path(path)
 
-        # Determine input type and process accordingly
+        # Process based on path type
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
@@ -110,40 +111,29 @@ def main(
             disable=quiet
         ) as progress:
 
-            if input_path_obj.is_dir():
-                task = progress.add_task("Scanning directory...", total=None)
+            if path_obj.is_dir():
+                task = progress.add_task(f"Scanning directory: {path}...", total=None)
                 notices = generator.scan_directory(
-                    input_path,
+                    path,
                     recursive=recursive,
                     output_format=format
                 )
-            elif input_path_obj.suffix in ['.jar', '.war', '.whl', '.zip', '.tar', '.gz']:
-                task = progress.add_task("Processing archive...", total=None)
-                notices = generator.process_archive(
-                    input_path,
-                    output_format=format
-                )
-            elif input_path_obj.suffix in ['.txt', '.list']:
-                task = progress.add_task("Processing PURL list...", total=None)
-                notices = generator.process_purl_list(
-                    input_path,
-                    output_format=format
-                )
+            elif path_obj.is_file():
+                # Check if it's an archive
+                archive_extensions = {'.jar', '.war', '.whl', '.zip', '.tar', '.gz', '.bz2', '.egg'}
+                if path_obj.suffix.lower() in archive_extensions:
+                    task = progress.add_task(f"Processing archive: {path}...", total=None)
+                    notices = generator.process_archive(
+                        path,
+                        output_format=format
+                    )
+                else:
+                    console.print(f"[red]Error: {path} is not a supported archive format[/red]")
+                    console.print("Supported archives: JAR, WAR, WHL, ZIP, TAR, GZ, BZ2, EGG")
+                    sys.exit(1)
             else:
-                # Try to process as single PURL
-                task = progress.add_task("Processing input...", total=None)
-                with open(input_path, 'r') as f:
-                    content = f.read().strip()
-                    if content.startswith('pkg:'):
-                        notices = generator.process_single_purl(
-                            content,
-                            output_format=format
-                        )
-                    else:
-                        notices = generator.process_purl_list(
-                            input_path,
-                            output_format=format
-                        )
+                console.print(f"[red]Error: {path} is neither a directory nor a file[/red]")
+                sys.exit(1)
 
         # Write output
         output_path = Path(output)

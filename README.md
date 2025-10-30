@@ -1,14 +1,15 @@
 # OSS Notices
 
-A simplified CLI wrapper for generating open source legal notices using the powerful [purl2notices](https://github.com/SemClone/purl2notices) library.
+A simplified CLI wrapper for generating open source legal notices from local source code using the powerful [purl2notices](https://github.com/SemClone/purl2notices) library.
 
 ## Features
 
-- **Simple Interface**: Streamlined CLI for common use cases
-- **Multiple Input Types**: Process directories, archives, PURL lists, or single PURLs
-- **Format Options**: Generate notices in text, HTML, or JSON formats
-- **Smart Caching**: Automatic caching for faster subsequent runs
-- **Progress Feedback**: Visual progress indicators with rich terminal output
+- **Simple Interface**: Streamlined CLI for scanning local source code
+- **Directory Scanning**: Recursively analyze directories for package dependencies
+- **Archive Support**: Process JAR, WAR, WHL, ZIP, and other archive formats
+- **Multiple Output Formats**: Generate notices in text, HTML, or JSON
+- **Smart Caching**: Automatic caching for improved performance
+- **Progress Indicators**: Visual feedback with rich terminal output
 
 ## Installation
 
@@ -18,53 +19,37 @@ pip install ossnotices
 
 For development:
 ```bash
-git clone <repository>
+git clone https://github.com/SemClone/ossnotices.git
 cd ossnotices
 pip install -e .
 ```
 
 ## Quick Start
 
-### Scan current directory
 ```bash
-ossnotices .
-```
+# Scan current directory (default)
+ossnotices
 
-### Scan directory recursively and save to file
-```bash
-ossnotices ./src --recursive -o NOTICE.txt
-```
+# Scan specific directory
+ossnotices ./src
 
-### Generate HTML format
-```bash
+# Scan recursively and save to file
+ossnotices ./project --recursive -o NOTICE.txt
+
+# Generate HTML format
 ossnotices ./project -f html -o notices.html
-```
 
-### Process a JAR file
-```bash
-ossnotices library.jar
-```
-
-### Process a list of PURLs
-Create a file with PURLs (one per line):
-```
-pkg:npm/express@4.0.0
-pkg:pypi/django@4.2.0
-pkg:maven/org.apache.commons/commons-lang3@3.12.0
-```
-
-Then process it:
-```bash
-ossnotices packages.txt -o NOTICE.txt
+# Process a JAR file
+ossnotices library.jar -o NOTICE.txt
 ```
 
 ## Command Line Options
 
 ```
-Usage: ossnotices [OPTIONS] INPUT_PATH
+Usage: ossnotices [OPTIONS] [PATH]
 
 Arguments:
-  INPUT_PATH  Directory, archive, PURL list file, or single PURL
+  PATH  Directory or archive file to scan (default: current directory)
 
 Options:
   --version              Show version and exit
@@ -81,16 +66,14 @@ Options:
 
 **ossnotices** automatically detects the input type:
 
-- **Directory**: Scans for packages in source code
-- **Archive**: Processes JAR, WAR, WHL, ZIP, TAR files
-- **PURL List**: Text file with Package URLs (one per line)
-- **Single PURL**: Direct package URL string
+- **Directory**: Scans source code for package dependencies
+- **Archive**: Processes JAR, WAR, WHL, ZIP, TAR, GZ, BZ2, EGG files
 
 ## Output Formats
 
 ### Text Format (default)
 Plain text notices suitable for inclusion in distributions:
-```
+```bash
 ossnotices ./project -o NOTICE.txt
 ```
 
@@ -108,7 +91,7 @@ ossnotices ./project -f json -o notices.json
 
 ## Examples
 
-### Generate notices for a Python project
+### Scan a Python project
 ```bash
 ossnotices ./my-python-app --recursive -o NOTICE.txt
 ```
@@ -123,6 +106,11 @@ ossnotices app.jar -o NOTICE.txt
 ossnotices ./src -f html -o docs/licenses.html
 ```
 
+### Scan current directory with default settings
+```bash
+ossnotices
+```
+
 ### Quiet mode for CI/CD pipelines
 ```bash
 ossnotices . -q -o NOTICE.txt
@@ -130,7 +118,7 @@ ossnotices . -q -o NOTICE.txt
 
 ### Verbose mode for debugging
 ```bash
-ossnotices . -v -o NOTICE.txt
+ossnotices . -v
 ```
 
 ## Caching
@@ -142,20 +130,33 @@ To disable caching:
 ossnotices . --no-cache
 ```
 
+## Supported Package Ecosystems
+
+Through purl2notices, ossnotices supports:
+- Python (PyPI)
+- JavaScript/Node.js (npm)
+- Java (Maven)
+- Ruby (RubyGems)
+- Go modules
+- Rust (Cargo)
+- .NET (NuGet)
+- PHP (Composer)
+- And many more...
+
 ## Under the Hood
 
-This tool leverages the powerful [purl2notices](https://github.com/SemClone/purl2notices) library, which provides:
+This tool leverages [purl2notices](https://github.com/SemClone/purl2notices), which provides:
 
-- Support for 12+ package ecosystems (npm, PyPI, Maven, Cargo, Go, NuGet, Conda, etc.)
-- Smart license extraction using multiple detection engines
-- CycloneDX cache format
-- Customizable templates and overrides
+- Support for 12+ package ecosystems
+- Multiple license detection engines
+- Smart extraction from various archive formats
+- CycloneDX cache format support
 
-For advanced use cases, consider using purl2notices directly.
+For advanced use cases requiring direct PURL processing or custom configurations, consider using purl2notices directly.
 
 ## License
 
-Apache License 2.0
+MIT License
 
 ## Contributing
 
@@ -163,4 +164,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Support
 
-For issues and questions, please use the GitHub issue tracker.
+For issues and questions, please use the [GitHub issue tracker](https://github.com/SemClone/ossnotices/issues).

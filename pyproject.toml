@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ossnotices"
-version = "1.0.1"
+version = "1.0.2"
 description = "Simplified CLI wrapper for generating open source legal notices"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "Apache-2.0"}
+license = {text = "MIT"}
 authors = [
     {name = "Oscar Valenzuela B", email = "oscar.valenzuela.b@gmail.com"}
 ]
@@ -25,7 +25,7 @@ keywords = [
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
